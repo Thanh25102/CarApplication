@@ -1,5 +1,6 @@
 import { IsString, IsEmail } from 'class-validator';
-export default class RegisterDTO {
+import { BaseDTO } from './base.dto';
+export default class RegisterDTO extends BaseDTO {
   @IsEmail()
   email: string;
   @IsString()

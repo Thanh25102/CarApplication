@@ -13,7 +13,7 @@ export class UserService {
       email: register.email,
       password: register.password,
     });
-    this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   findAll() {

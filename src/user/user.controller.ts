@@ -6,15 +6,15 @@ import {
   Put,
   Query,
   Session,
-  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common/decorators';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import RegisterDTO from 'src/dto/register.dto';
 import UpdateUserDTO from 'src/dto/update-user.dto';
 import { UserDTO } from 'src/dto/user.dto';
+import { Guard } from 'src/guard/auth.guard';
 import { Serialize } from 'src/interceptor/Serialize.interceptor';
 import { AuthenticationSerivce } from './authentication.service';
-import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -25,6 +25,7 @@ export class UserController {
     private authService: AuthenticationSerivce,
   ) {}
   @Get('/whoiam')
+  @UseGuards(Guard)
   whoAmI(@CurrentUser() user: User) {
     return user;
   }

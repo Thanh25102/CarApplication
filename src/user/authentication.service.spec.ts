@@ -1,11 +1,22 @@
 import { Test } from '@nestjs/testing';
+import RegisterDTO from 'src/dto/register.dto';
 import { AuthenticationSerivce } from './authentication.service';
 import { UserService } from './user.service';
-it('can create an instance of auth service', async () => {
-  const fakeUserService = {
-    findOne: () => Promise.resolve([]),
-    create: (email: string, password: string) =>
-      Promise.resolve({ id: 1, email, password }),
+let service: AuthenticationSerivce;
+beforeEach(async () => {
+  const fakeUserService: Partial<UserService> = {
+    findOne: (id) =>
+      Promise.resolve({
+        id,
+        email: 'manhthanh147@gmail.com',
+        password: '0909388963',
+      }),
+    addUser: (register: RegisterDTO) =>
+      Promise.resolve({
+        id: 1,
+        email: register.email,
+        password: register.password,
+      }),
   };
   const module = await Test.createTestingModule({
     providers: [
@@ -14,7 +25,9 @@ it('can create an instance of auth service', async () => {
     ],
   }).compile();
 
-  const service = module.get(AuthenticationSerivce);
+  service = module.get(AuthenticationSerivce);
+});
 
+it('can create an instance of auth service', async () => {
   expect(service).toBeDefined();
 });

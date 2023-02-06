@@ -1,72 +1,73 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import {
-  Delete,
-  Get,
-  Param,
-  Put,
-  Query,
-  Session,
-  UseGuards,
-} from '@nestjs/common/decorators';
-import { CurrentUser } from 'src/decorator/current-user.decorator';
-import RegisterDTO from 'src/dto/register.dto';
-import UpdateUserDTO from 'src/dto/update-user.dto';
-import { UserDTO } from 'src/dto/user.dto';
-import { Guard } from 'src/guard/auth.guard';
-import { Serialize } from 'src/interceptor/Serialize.interceptor';
-import { AuthenticationSerivce } from './authentication.service';
-import { User } from './user.entity';
-import { UserService } from './user.service';
+import { Body, Controller, Post } from "@nestjs/common";
+import { Delete, Get, Param, Put, Query, Session, UseGuards } from "@nestjs/common/decorators";
+import { CurrentUser } from "src/decorator/current-user.decorator";
+import RegisterDTO from "src/dto/register.dto";
+import UpdateUserDTO from "src/dto/update-user.dto";
+import { UserDTO } from "src/dto/user.dto";
+import { Guard } from "src/guard/auth.guard";
+import { Serialize } from "src/interceptor/Serialize.interceptor";
+import { AuthenticationSerivce } from "./authentication.service";
+import { User } from "./user.entity";
+import { UserService } from "./user.service";
 
-@Controller('auth')
+@Controller("auth")
 export class UserController {
   constructor(
     private userService: UserService,
-    private authService: AuthenticationSerivce,
-  ) {}
-  @Get('/whoiam')
+    private authService: AuthenticationSerivce
+  ) {
+  }
+
+  @Get("/whoiam")
   @UseGuards(Guard)
   whoAmI(@CurrentUser() user: User) {
     return user;
   }
-  @Post('/signout')
+
+  @Post("/signout")
   logout(@Session() session: any) {
     session.userId = null;
   }
-  @Post('/signup')
+
+  @Post("/signup")
   async createUser(@Body() register: RegisterDTO, @Session() session: any) {
     const user = await this.authService.signup(
       register.email,
-      register.password,
+      register.password
     );
     session.userId = user.id;
     return user;
   }
-  @Post('/signin')
+
+  @Post("/signin")
   @Serialize(UserDTO)
   async signin(@Body() register: RegisterDTO, @Session() session: any) {
     const user = await this.authService.signin(
       register.email,
-      register.password,
+      register.password
     );
     session.userId = user.id;
     return user;
   }
-  @Get('/:id')
+
+  @Get("/:id")
   @Serialize(UserDTO)
-  findUser(@Param('id') id: number) {
+  findUser(@Param("id") id: number) {
     return this.userService.findOne(id);
   }
+
   @Get()
-  findUserByEmail(@Query('email') email: string) {
+  findUserByEmail(@Query("email") email: string) {
     return this.userService.findOneByEmail(email);
   }
-  @Delete('/:id')
-  removeUser(@Param('id') id: number) {
+
+  @Delete("/:id")
+  removeUser(@Param("id") id: number) {
     return this.userService.remove(id);
   }
-  @Put('/:id')
-  updateUser(@Param('id') id: number, @Body() updateUser: UpdateUserDTO) {
+
+  @Put("/:id")
+  updateUser(@Param("id") id: number, @Body() updateUser: UpdateUserDTO) {
     return this.userService.update(id, updateUser);
   }
 }

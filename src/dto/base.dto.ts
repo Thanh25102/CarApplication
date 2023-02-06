@@ -1,1 +1,2 @@
-export class BaseDTO {}
+export class BaseDTO {
+}
